@@ -1,0 +1,47 @@
+body {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+  
+header {
+  text-align: center;
+  background-color: rgb(126, 237, 237);
+  padding: 2vh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  min-height: 80vh;
+}
+
+#menu-buttons {
+  display: flex;
+  gap: 10vw;
+  justify-content: center;
+}
+
+main {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.pokemon-card {
+  margin: auto;
+  text-align: center;
+}
+
+img {
+  height: 20vh;
+}
+
+footer {
+  text-align: center;
+  background-color: rgb(80, 213, 213);
+  margin: 0;
+  padding: 2vh;
+}
+
