@@ -1,17 +1,19 @@
-body {
+body, #root {
   padding: 0;
   margin: 0;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
   
 header {
-  text-align: center;
   background-color: rgb(126, 237, 237);
-  padding: 2vh;
-  margin: 0;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  padding-top: 2vh;
+  padding-bottom: 5vh;
 }
 
 main {
@@ -26,16 +28,40 @@ main {
 
 main {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
+  width: 100%;
 }
 
 .pokemon-card {
-  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 5px solid grey;
+}
+
+h1, h2 {
   text-align: center;
 }
 
 img {
+  margin: auto;
   height: 20vh;
+}
+
+.faceup {
+  background-color: blue;
+}
+
+.facedown {
+  background-color: black;
+}
+
+.visible {
+  display: block;
+}
+
+.hidden {
+  display: none;
 }
 
 footer {
@@ -43,5 +69,6 @@ footer {
   background-color: rgb(80, 213, 213);
   margin: 0;
   padding: 2vh;
+  width: 100%;
 }
 
