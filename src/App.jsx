@@ -1,4 +1,7 @@
 import { useState, useEffect } from 'react'
+import bigPokeBall from './assets/bigpokeball.png'
+import pika from './assets/pika.jpg'
+import pokeLogo from './assets/pokelogo.png'
 import './App.css'
 
 let pokeInit = false
@@ -18,7 +21,7 @@ function Header({ score, bestScore,  getPokemon, setNumPokemon }) {
   return (
     <header>
       <div id='title'>
-        <img src='/src/assets/pokelogo.png' alt='pokemon-logo' />
+        <img src={pokeLogo} alt='pokemon-logo' />
         <h1>Memory Cards</h1>
       </div>
       <div id='menu-buttons'>
@@ -68,9 +71,9 @@ function Board({ score, setScore, bestScore, setBestScore, pokemon, cardStates, 
 
   if (pokemon.length === 0) {
     return <main id='loading'>
-      <img src='/src/assets/pika.jpg' alt='pikachu' />
+      <img src={pika} alt='pikachu' />
       <h1>Loading Pokemon...</h1>
-      <img src='/src/assets/pika.jpg' alt='pikachu' />
+      <img src={pika}alt='pikachu' />
     </main>
   }
 
@@ -85,7 +88,7 @@ function Board({ score, setScore, bestScore, setBestScore, pokemon, cardStates, 
             <h2>{poke.name}</h2>
           </div>
           <div className={'card-back '}> 
-            <img src='/src/assets/bigpokeball.png' alt='big-pokeball'/>
+            <img src={bigPokeBall} alt='bigPokeBall'/>
           </div>
         </div>
           })}
