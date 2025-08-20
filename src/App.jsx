@@ -7,75 +7,88 @@ function genId() {
   return UUID++
 }
 
-function Header({ getPokemon, setNumPokemon }) {
-  function handleBoard() {
+function Header({ score, bestScore,  getPokemon, setNumPokemon }) {
+  async function handleBoard() {
     let newPokeCount = prompt('Enter new number of pokemon')
+    if (!newPokeCount || newPokeCount === '0') newPokeCount = 6
+    await getPokemon(newPokeCount)
     setNumPokemon(newPokeCount)
-    getPokemon(newPokeCount)
   }
 
   return (
     <header>
-      <h1>Pokémon Memory Cards</h1>
+      <div id='title'>
+        <img src='/src/assets/pokelogo.png' alt='pokemon-logo' />
+        <h1>Memory Cards</h1>
+      </div>
       <div id='menu-buttons'>
-        <button onClick={() => getPokemon()}>new game</button>
-        <button onClick={() => handleBoard()}>set board size</button>
+        <button onClick={async () => await getPokemon()}>new game</button>
+        <button onClick={async () => await handleBoard()}>set Poké Count</button>
+      </div>
+      <div id='scoreboard'>
+        <h3>Score: {score}</h3>
+        <h3>Best score: {bestScore === Infinity ? 'None yet...' : bestScore}</h3>
       </div>
     </header>
   )
 }
 
-function Board({ pokemon, numPokemon, cardStates, setCardStates }) {
+function Board({ score, setScore, bestScore, setBestScore, pokemon, cardStates, setCardStates }) {
   function flipPokemon(pokeId) {
     if (cardStates[pokeId].faceup && cardStates[pokeId].visible) return
-    let numRev = cardStates.filter((card) => card.visible && card.faceup).length
-    if (numRev === 2) {
-      let newCardStates = structuredClone(cardStates)
-      let faceups = []
-      for (let i = 0; i < cardStates.length; i++) {
-        if (cardStates[i].visible && cardStates[i].faceup) faceups.push(i)
-      }
-
-      let faceupNames = pokemon.filter((poke) => faceups.includes(poke.id)).map((poke) => poke.name)
-      if (faceupNames[0] === faceupNames[1]) {
-        newCardStates[faceups[0]].visible = false
-        newCardStates[faceups[1]].visible = false
-      } else {
-        newCardStates[faceups[0]].faceup = false
-        newCardStates[faceups[1]].faceup = false
-      }
-      newCardStates[pokeId].faceup = true
-      setCardStates(newCardStates)
-    } else {
-      let newCardStates = cardStates.map((card, index) => {
-        return { ...card, faceup: index === pokeId ? true : card.faceup }
-      }) 
-      let visibleCards = []
-      for (let i = 0; i < cardStates.length; i++) {
-        if (cardStates[i].visible) visibleCards.push(i)
-      }
-
-      if (visibleCards.length === 2 && 
-        (cardStates[visibleCards[0]].faceup || cardStates[visibleCards[1]].faceup )) {
-        newCardStates[visibleCards[0]].visible = false
-        newCardStates[visibleCards[1]].visible = false
-      }
-      setCardStates(newCardStates)
+    let activeCards = []
+    for (let i = 0; i < cardStates.length; i++) {
+      if (cardStates[i].visible && cardStates[i].faceup) activeCards.push(i)
     }
+
+    let newCardStates = structuredClone(cardStates)
+    if (activeCards.length === 0) {
+      newCardStates[pokeId].faceup = true
+    } else if (activeCards.length === 1) {
+      activeCards.push(pokeId)
+      let faceupNames = pokemon.filter((poke) => activeCards.includes(poke.id)).map((poke) => poke.name)
+      newCardStates[activeCards[1]].faceup = true
+      if (faceupNames[0] === faceupNames[1]) {
+        newCardStates[activeCards[0]].visible = false
+        newCardStates[activeCards[1]].visible = false
+      } 
+    } else if (activeCards.length === 2) {
+      newCardStates[activeCards[0]].faceup = false
+      newCardStates[activeCards[1]].faceup = false
+      newCardStates[pokeId].faceup = true
+    } 
+
+    let visibleCards = []
+    for (let i = 0; i < newCardStates.length; i++) if (newCardStates[i].visible) visibleCards.push(i)
+      
+    setCardStates(newCardStates)
+    setScore(score+1)
+    if (visibleCards.length === 0) setBestScore(Math.min(bestScore, score+1))
+  }
+
+  if (pokemon.length === 0) {
+    return <main id='loading'>
+      <img src='/src/assets/pika.jpg' alt='pikachu' />
+      <h1>Loading Pokemon...</h1>
+      <img src='/src/assets/pika.jpg' alt='pikachu' />
+    </main>
   }
 
   return (
     <main>
       {pokemon.map((poke) => {
-        return <div 
-          key={poke.id} 
-          className={'pokemon-card ' + (cardStates[poke.id].faceup ? 'faceup ' : 'facedown ') + (cardStates[poke.id].visible ? 'visible ' : 'hidden ')} 
-          onClick={() => flipPokemon(poke.id)}
-          >
-          <img src={poke.sprite} />
-          <h2>{poke.name}</h2>
+        return <div key={poke.id} 
+          className={'pokemon-card ' + (cardStates[poke.id].faceup ? 'faceup ' : '')} 
+          onClick={() => flipPokemon(poke.id)}>
+          <div className={'card-front ' + (cardStates[poke.id].visible ? '' : 'hidden ')}>
+            <img src={poke.sprite} />
+            <h2>{poke.name}</h2>
+          </div>
+          <div className={'card-back '}> 
+            <img src='/src/assets/bigpokeball.png' alt='big-pokeball'/>
+          </div>
         </div>
-      })}
+          })}
     </main>
   )
 }
@@ -86,7 +99,7 @@ function Footer() {
       <h3>
         2025 Caleb Lee
       </h3>
-      <p>Made with <a href='https://pokeapi.co/'>PokéApi</a></p>
+      <p>Made with Vite + React and <a href='https://pokeapi.co/'>PokéApi</a></p>
     </footer>
   )
 }
@@ -94,7 +107,9 @@ function Footer() {
 function App() {
   const [ numPokemon, setNumPokemon ] = useState(6)
   const [ pokemon, setPokemon ] = useState([])
-  const [ cardStates, setCardStates ] = useState(new Array(12).fill({faceup: false, visible: true}))
+  const [ cardStates, setCardStates ] = useState(null)
+  const [ score, setScore ] = useState(0)
+  const [ bestScore, setBestScore ] = useState(Infinity)
 
   useEffect(() => {
     if (!pokeInit) {
@@ -106,7 +121,6 @@ function App() {
   async function getPokemon(pokeCount = numPokemon) {
     let nextPokemon = new Array(pokeCount*2)
     UUID = 0
-    setCardStates(new Array(numPokemon*2).fill({faceup: false, visible: true}))
     try {
       let indicesToFill = []
       for (let i = 0; i < pokeCount*2; i++) {
@@ -139,13 +153,15 @@ function App() {
       console.error(e)
     } finally {
       setPokemon(nextPokemon)
+      setCardStates(Array.from(new Array(pokeCount*2), () => {return {faceup: false, visible: true}}))
+      setScore(0)
     }
   }
 
   return (
     <>
-      <Header getPokemon={getPokemon} setNumPokemon={setNumPokemon} />
-      <Board pokemon={pokemon} numPokemon={numPokemon} cardStates={cardStates} setCardStates={setCardStates} />
+      <Header score={score} bestScore={bestScore} getPokemon={getPokemon} setNumPokemon={setNumPokemon} />
+      <Board score={score} setScore={setScore} bestScore={bestScore} setBestScore={setBestScore} pokemon={pokemon} cardStates={cardStates} setCardStates={setCardStates} />
       <Footer />
     </>
   )
