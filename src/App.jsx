@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import bigPokeBall from './assets/bigpokeball.png'
 import pika from './assets/pika.jpg'
 import pokeLogo from './assets/pokelogo.png'
+import pokeApi from './assets/pokeapi.png'
+import slowpoke from './assets/slowpoke.gif'
 import './App.css'
 
 let pokeInit = false
@@ -10,7 +12,7 @@ function genId() {
   return UUID++
 }
 
-function Header({ score, bestScore,  getPokemon, setNumPokemon }) {
+function Header({ score, bestScore,  getPokemon, setNumPokemon, win, setWin }) {
   async function handleBoard() {
     let newPokeCount = prompt('Enter new number of pokemon')
     if (!newPokeCount || newPokeCount === '0') newPokeCount = 6
@@ -36,7 +38,7 @@ function Header({ score, bestScore,  getPokemon, setNumPokemon }) {
   )
 }
 
-function Board({ score, setScore, bestScore, setBestScore, pokemon, cardStates, setCardStates }) {
+function Board({ score, setScore, bestScore, setBestScore, pokemon, cardStates, setCardStates, win, setWin }) {
   function flipPokemon(pokeId) {
     if (cardStates[pokeId].faceup && cardStates[pokeId].visible) return
     let activeCards = []
@@ -66,7 +68,10 @@ function Board({ score, setScore, bestScore, setBestScore, pokemon, cardStates, 
       
     setCardStates(newCardStates)
     setScore(score+1)
-    if (visibleCards.length === 0) setBestScore(Math.min(bestScore, score+1))
+    if (visibleCards.length === 0) {
+      setBestScore(Math.min(bestScore, score+1))
+      setWin(true)
+    }
   }
 
   if (pokemon.length === 0) {
@@ -92,6 +97,11 @@ function Board({ score, setScore, bestScore, setBestScore, pokemon, cardStates, 
           </div>
         </div>
           })}
+
+      {win && <div id='windiv' onClick={() => setWin(false)}>
+        <img src={slowpoke}/>
+        <h2>You Won!</h2>
+      </div>}
     </main>
   )
 }
@@ -99,10 +109,13 @@ function Board({ score, setScore, bestScore, setBestScore, pokemon, cardStates, 
 function Footer() {
   return (
     <footer>
-      <h3>
-        2025 Caleb Lee
-      </h3>
-      <p>Made with Vite + React and <a href='https://pokeapi.co/'>PokéApi</a></p>
+      <div id='credit'>
+        <h3>Made with Vite + React and </h3>
+        <a href='https://pokeapi.co/'>
+          <img src={pokeApi} />
+        </a>
+      </div>
+      <p>2025 Caleb Lee</p>
     </footer>
   )
 }
@@ -113,6 +126,7 @@ function App() {
   const [ cardStates, setCardStates ] = useState(null)
   const [ score, setScore ] = useState(0)
   const [ bestScore, setBestScore ] = useState(Infinity)
+  const [ win, setWin ] = useState(false)
 
   useEffect(() => {
     if (!pokeInit) {
@@ -158,13 +172,25 @@ function App() {
       setPokemon(nextPokemon)
       setCardStates(Array.from(new Array(pokeCount*2), () => {return {faceup: false, visible: true}}))
       setScore(0)
+      setWin(false)
     }
   }
 
   return (
     <>
-      <Header score={score} bestScore={bestScore} getPokemon={getPokemon} setNumPokemon={setNumPokemon} />
-      <Board score={score} setScore={setScore} bestScore={bestScore} setBestScore={setBestScore} pokemon={pokemon} cardStates={cardStates} setCardStates={setCardStates} />
+      <Header 
+        score={score} bestScore={bestScore} 
+        getPokemon={getPokemon} 
+        setNumPokemon={setNumPokemon} 
+        win={win} setWin={setWin}
+      />
+      <Board 
+        score={score} setScore={setScore} 
+        bestScore={bestScore} setBestScore={setBestScore} 
+        pokemon={pokemon} 
+        cardStates={cardStates} setCardStates={setCardStates} 
+        win={win} setWin={setWin}
+      />
       <Footer />
     </>
   )
