@@ -21,6 +21,8 @@ header {
   grid-template: 1fr 1fr / 1fr 1fr;
   gap: 2vh;
   justify-items: center;
+  box-shadow: 0px 0px 5px 2px grey;
+  z-index: 1;
 }
 
 #title {
@@ -94,6 +96,7 @@ main {
   transition: transform 0.7s ease-in-out;
   position: relative;
   border-radius: 20px;
+  box-shadow: 0px 10px 6px 0px darkgrey;
 }
 
 .card-front:hover {
@@ -120,9 +123,9 @@ button:focus {
 }
 
 button:hover {
-  border: 2px solid rgb(1, 151, 69);
-  background-color: #ffffff;
-  color: rgb(1, 151, 69);
+  border: 2px solid white;
+  background-color: rgb(9, 196, 93);
+  color: white;
 }
 
 h1 {
@@ -198,6 +201,7 @@ footer {
   margin: 0;
   padding-top: 2vh;
   padding-bottom: 2vh;
+  box-shadow: 0px 0px 5px 2px grey;
   width: 100%;
 }
 
