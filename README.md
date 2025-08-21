@@ -1,5 +1,5 @@
 # Pokemon Memory Cards
 
-I created this card flipping game with Vite + React
+A pokemon card flipping game made with Vite + React
 
 Try it out 👉 [Pokemon Memory Cards](https://pokemonmemcards.netlify.app/)
